@@ -62,6 +62,17 @@ async function getProfileByUserId(userId) {
   });
 }
 
+async function updateProfile(userId, data) {
+  return prisma.profile.update({
+    where: { userId },
+    data: {
+      bio: data.bio,
+      avatarUrl: data.avatarUrl,
+      location: data.location,
+    },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -70,5 +81,6 @@ module.exports = {
   getPostById,
   updatePost,
   deletePost,
-  getProfileByUserId
+  getProfileByUserId,
+  updateProfile
 };
