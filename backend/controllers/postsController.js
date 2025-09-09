@@ -49,8 +49,32 @@ const updatePost = async (req, res) => {
   }
 };
 
+const deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Fetch the existing post
+    const existingPost = await db.getPostById(Number(postId));
+    if (!existingPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Ownership check
+    if (existingPost.authorId !== req.user.id) {
+      return res.status(403).json({ error: "You cannot delete this post" });
+    }
+
+    // Perform deletion
+    await db.deletePost(Number(postId));
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+};
+
 module.exports = {
   getAllPosts,
   createPost,
   updatePost,
+  deletePost,
 };
