@@ -13,7 +13,22 @@ async function createUser(username, hashedPassword) {
   });
 }
 
+async function getPostsByUserId(userId) {
+  return prisma.post.findMany({
+    where: { authorId: userId },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+async function createPost({ title, content, authorId }) {
+  return prisma.post.create({
+    data: { title, content, authorId },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
+  getPostsByUserId,
+  createPost,
 };
