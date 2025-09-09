@@ -52,6 +52,16 @@ async function deletePost(postId) {
   });
 }
 
+async function getProfileByUserId(userId) {
+  return prisma.profile.findUnique({
+    where: { userId },
+    include: {
+      user: true,
+      posts: true,
+    },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -59,5 +69,6 @@ module.exports = {
   createPost,
   getPostById,
   updatePost,
-  deletePost
+  deletePost,
+  getProfileByUserId
 };
