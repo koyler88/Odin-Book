@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // Routers
 const authRouter = require("./routes/authRouter");
+const postsRouter = require("./routes/postsRouter");
 
 //middleware
 app.use(express.json());
@@ -22,5 +23,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/posts", postsRouter)
 
 app.listen(PORT, () => console.log(`backend running on port ${PORT}`));

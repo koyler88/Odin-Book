@@ -22,7 +22,35 @@ const createPost = async (req, res) => {
   }
 };
 
+const updatePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Fetch the existing post
+    const existingPost = await db.getPostById(Number(postId));
+    if (!existingPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Ownership check
+    if (existingPost.authorId !== req.user.id) {
+      return res.status(403).json({ error: "You cannot edit this post" });
+    }
+
+    // Perform update
+    const updatedPost = await db.updatePost({
+      title: req.body.title,
+      content: req.body.content,
+      postId: Number(postId),
+    });
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update post" });
+  }
+};
+
 module.exports = {
   getAllPosts,
-  createPost
+  createPost,
+  updatePost,
 };

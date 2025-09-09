@@ -26,9 +26,31 @@ async function createPost({ title, content, authorId }) {
   });
 }
 
+async function getPostById(postId) {
+  return prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+}
+
+async function updatePost({ title, content, postId }) {
+  return prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data: {
+      title,
+      content,
+    },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
   getPostsByUserId,
   createPost,
+  getPostById,
+  updatePost,
 };
