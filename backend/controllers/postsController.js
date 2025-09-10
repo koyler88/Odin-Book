@@ -1,11 +1,22 @@
 const db = require("../db/queries");
 
+
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await db.getPostsByUserId(req.user.id);
+    const posts = await db.getAllPosts();
     res.json(posts);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch posts" });
+  }
+};
+
+const getPostsByUserId = async (req, res) => {
+  try {
+    const userId = Number(req.params.userId);
+    const posts = await db.getPostsByUserId(userId);
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user's posts" });
   }
 };
 
@@ -74,6 +85,7 @@ const deletePost = async (req, res) => {
 
 module.exports = {
   getAllPosts,
+  getPostsByUserId,
   createPost,
   updatePost,
   deletePost,

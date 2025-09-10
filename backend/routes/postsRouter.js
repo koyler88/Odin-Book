@@ -5,10 +5,19 @@ const passport = require("passport");
 
 const postsController = require("../controllers/postsController");
 
+
+// Feed: all posts
 postsRouter.get(
   "/",
   passport.authenticate("jwt", { session: false }),
   postsController.getAllPosts
+);
+
+// Posts by user
+postsRouter.get(
+  "/user/:userId",
+  passport.authenticate("jwt", { session: false }),
+  postsController.getPostsByUserId
 );
 
 postsRouter.post(

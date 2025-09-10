@@ -1,3 +1,8 @@
+async function getAllPosts() {
+  return prisma.post.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+}
 const prisma = require("./prismaClient");
 
 async function findUserByUsername(username) {
@@ -76,6 +81,7 @@ async function updateProfile(userId, data) {
 module.exports = {
   findUserByUsername,
   createUser,
+  getAllPosts,
   getPostsByUserId,
   createPost,
   getPostById,
