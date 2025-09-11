@@ -121,6 +121,18 @@ async function removeLike({ postId, userId }) {
   });
 }
 
+async function createFollow(followerId, followingId) {
+  return prisma.follow.create({
+    data: { followerId, followingId, status: "accepted" },
+  });
+}
+
+async function deleteFollow(followerId, followingId) {
+  return prisma.follow.delete({
+    where: { followerId_followingId: { followerId, followingId } },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -138,5 +150,7 @@ module.exports = {
   updateComment,
   deleteComment,
   addLike,
-  removeLike
+  removeLike,
+  createFollow,
+  deleteFollow
 };
