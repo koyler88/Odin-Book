@@ -109,6 +109,18 @@ async function deleteComment(commentId) {
   return prisma.comment.delete({ where: { id: commentId } });
 }
 
+async function addLike({ postId, userId }) {
+  return prisma.like.create({
+    data: { postId, userId },
+  });
+}
+
+async function removeLike({ postId, userId }) {
+  return prisma.like.delete({
+    where: { userId_postId: { userId, postId } },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -125,4 +137,6 @@ module.exports = {
   getCommentById,
   updateComment,
   deleteComment,
+  addLike,
+  removeLike
 };

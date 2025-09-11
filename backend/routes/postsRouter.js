@@ -4,6 +4,7 @@ const postsRouter = Router();
 const passport = require("passport");
 
 const postsController = require("../controllers/postsController");
+const likesController = require("../controllers/likesController");
 const commentsRouter = require("./commentsRouter");
 
 // Feed: all posts
@@ -41,5 +42,11 @@ postsRouter.delete(
 // Comments
 
 postsRouter.use("/:postId/comments", commentsRouter);
+
+// Likes
+
+postsRouter.post("/:postId/like", likesController.likePost);
+
+postsRouter.delete("/:postId/like", likesController.unlikePost);
 
 module.exports = postsRouter;
