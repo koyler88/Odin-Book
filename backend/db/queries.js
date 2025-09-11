@@ -78,6 +78,37 @@ async function updateProfile(userId, data) {
   });
 }
 
+async function getCommentsByPostId(postId) {
+  return prisma.comment.findMany({
+    where: { postId },
+    include: {
+      author: { select: { id: true, username: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+async function createComment({ content, postId, authorId }) {
+  return prisma.comment.create({
+    data: { content, postId, authorId },
+  });
+}
+
+async function getCommentById(commentId) {
+  return prisma.comment.findUnique({ where: { id: commentId } });
+}
+
+async function updateComment(commentId, content) {
+  return prisma.comment.update({
+    where: { id: commentId },
+    data: { content },
+  });
+}
+
+async function deleteComment(commentId) {
+  return prisma.comment.delete({ where: { id: commentId } });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -88,5 +119,10 @@ module.exports = {
   updatePost,
   deletePost,
   getProfileByUserId,
-  updateProfile
+  updateProfile,
+  getCommentsByPostId,
+  createComment,
+  getCommentById,
+  updateComment,
+  deleteComment,
 };
