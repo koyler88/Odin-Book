@@ -1,9 +1,16 @@
+const prisma = require("./prismaClient");
+
 async function getAllPosts() {
   return prisma.post.findMany({
     orderBy: { createdAt: "desc" },
+    include: {
+      author: { select: { id: true, username: true } },
+      _count: {
+        select: { likes: true, comments: true },
+      },
+    },
   });
 }
-const prisma = require("./prismaClient");
 
 async function findUserByUsername(username) {
   return prisma.user.findUnique({ where: { username } });
@@ -22,6 +29,12 @@ async function getPostsByUserId(userId) {
   return prisma.post.findMany({
     where: { authorId: userId },
     orderBy: { createdAt: "desc" },
+    include: {
+      author: { select: { id: true, username: true } },
+      _count: {
+        select: { likes: true, comments: true },
+      },
+    },
   });
 }
 
@@ -33,8 +46,12 @@ async function createPost({ title, content, authorId }) {
 
 async function getPostById(postId) {
   return prisma.post.findUnique({
-    where: {
-      id: postId,
+    where: { id: postId },
+    include: {
+      author: { select: { id: true, username: true } },
+      _count: {
+        select: { likes: true, comments: true },
+      },
     },
   });
 }
@@ -152,5 +169,5 @@ module.exports = {
   addLike,
   removeLike,
   createFollow,
-  deleteFollow
+  deleteFollow,
 };
