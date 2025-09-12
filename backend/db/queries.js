@@ -150,6 +150,57 @@ async function deleteFollow(followerId, followingId) {
   });
 }
 
+async function getMessagesForUser(userId) {
+  return prisma.message.findMany({
+    where: {
+      OR: [{ authorId: userId }, { recipientId: userId }],
+    },
+    include: {
+      author: { select: { id: true, username: true } },
+      recipient: { select: { id: true, username: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+async function getConversation(userId, otherUserId) {
+  return prisma.message.findMany({
+    where: {
+      OR: [
+        { authorId: userId, recipientId: otherUserId },
+        { authorId: otherUserId, recipientId: userId },
+      ],
+    },
+    include: {
+      author: { select: { id: true, username: true } },
+      recipient: { select: { id: true, username: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+async function createMessage({ authorId, recipientId, content }) {
+  return prisma.message.create({
+    data: {
+      authorId,
+      recipientId,
+      content,
+    },
+  });
+}
+
+async function getMessageById(messageId) {
+  return prisma.message.findUnique({
+    where: { id: messageId },
+  });
+}
+
+async function deleteMessage(messageId) {
+  return prisma.message.delete({
+    where: { id: messageId },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -170,4 +221,9 @@ module.exports = {
   removeLike,
   createFollow,
   deleteFollow,
+  getMessagesForUser,
+  getConversation,
+  createMessage,
+  getMessageById,
+  deleteMessage,
 };
