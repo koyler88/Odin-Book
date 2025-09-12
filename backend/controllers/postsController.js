@@ -1,6 +1,5 @@
 const db = require("../db/queries");
 
-
 const getAllPosts = async (req, res) => {
   try {
     const posts = await db.getAllPosts();
@@ -83,10 +82,22 @@ const deletePost = async (req, res) => {
   }
 };
 
+const getFollowingFeed = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const posts = await db.getPostsFromFollowedUsers(userId);
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch following feed" });
+  }
+};
+
 module.exports = {
   getAllPosts,
   getPostsByUserId,
   createPost,
   updatePost,
   deletePost,
+  getFollowingFeed,
 };

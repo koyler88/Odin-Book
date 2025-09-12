@@ -38,6 +38,34 @@ async function getPostsByUserId(userId) {
   });
 }
 
+async function getPostsFromFollowedUsers(userId) {
+  // 1. Find all users the current user is following (status: accepted)
+  const followedUsers = await prisma.follow.findMany({
+    where: { followerId: userId, status: "accepted" },
+    select: { followingId: true },
+  });
+
+  const followingIds = followedUsers.map((f) => f.followingId);
+
+  // 2. Get posts by those users with like & comment counts
+  return prisma.post.findMany({
+    where: { authorId: { in: followingIds } },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      imageUrl: true,
+      createdAt: true,
+      updatedAt: true,
+      author: { select: { id: true, username: true } },
+      _count: {
+        select: { likes: true, comments: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 async function createPost({ title, content, authorId }) {
   return prisma.post.create({
     data: { title, content, authorId },
@@ -206,6 +234,7 @@ module.exports = {
   createUser,
   getAllPosts,
   getPostsByUserId,
+  getPostsFromFollowedUsers,
   createPost,
   getPostById,
   updatePost,

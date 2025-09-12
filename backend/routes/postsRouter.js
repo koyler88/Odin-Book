@@ -49,4 +49,12 @@ postsRouter.post("/:postId/like", likesController.likePost);
 
 postsRouter.delete("/:postId/like", likesController.unlikePost);
 
+// Following feed
+
+postsRouter.get(
+  "/following",
+  passport.authenticate("jwt", { session: false }),
+  postsController.getFollowingFeed
+);
+
 module.exports = postsRouter;
