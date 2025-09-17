@@ -1,0 +1,79 @@
+body {
+    background-color: black;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+}
+
+.brand-logo {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-family: cursive;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+input {
+  background-color: black;
+  border: 1px solid #333;
+  height: 2rem;
+  width: 15rem;
+  color: white;
+  padding: 0.4rem;
+  margin: 0.2rem;
+  border-radius: 4px;
+}
+
+.btn {
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.login-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.login-btn:hover {
+  background-color: #2980b9;
+  cursor: pointer;
+}
+
+.signup-redirect {
+  margin-top: 1rem;
+  color: white;
+}
+
+.register-link {
+  color: #7091ff;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.home-footer {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-top: 2rem;
+}

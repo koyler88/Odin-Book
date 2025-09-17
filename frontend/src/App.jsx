@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 // Page Elements
 import Home from "./pages/Home.jsx";
 import Register from "./pages/Register.jsx";
-import Login from "./pages/Login.jsx";
 
 function App() {
   return (
