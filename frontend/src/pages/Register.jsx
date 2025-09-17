@@ -2,6 +2,7 @@
 import "../styles/Register.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../api/auth";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -14,8 +15,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // TODO: integrate registerUser API
-      // await registerUser(form);
+      await registerUser(form);
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Try again.");

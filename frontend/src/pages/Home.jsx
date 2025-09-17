@@ -1,18 +1,21 @@
 import "../styles/Home.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from '../api/auth';
+import { useAuth } from '../hooks/useAuth'
+
 
 export default function Home() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // TODO: integrate loginUser API
-      // const { user, token } = await loginUser(form);
-      // login(user, token);
+      const { user, token } = await loginUser(form);
+      login(user, token);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
