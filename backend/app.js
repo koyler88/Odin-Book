@@ -12,6 +12,16 @@ const postsRouter = require("./routes/postsRouter");
 const usersRouter = require("./routes/usersRouter");
 const messagesRouter = require("./routes/messagesRouter");
 
+// cors allow frontend
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
