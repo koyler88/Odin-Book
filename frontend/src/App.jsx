@@ -3,6 +3,11 @@ import { Route, Routes } from "react-router-dom";
 // Page Elements
 import Home from "./pages/Home.jsx";
 import Register from "./pages/Register.jsx";
+import Feed from './pages/Feed.jsx'
+import Conversation from './pages/Conversation.jsx'
+import CreatePost from './pages/CreatePost.jsx'
+import Messages from './pages/Messages.jsx'
+import Profile from './pages/Profile.jsx'
 
 function App() {
   return (
