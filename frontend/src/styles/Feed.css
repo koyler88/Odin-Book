@@ -1,0 +1,82 @@
+.feed-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.feed-header {
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.brand-logo {
+  font-family: cursive;
+  font-size: 1.8rem;
+  color: white;
+}
+
+/* Feed content */
+.feed-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.post {
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.post-avatar {
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.post-username {
+  font-weight: bold;
+}
+
+.post-image {
+  width: 100%;
+  display: block;
+}
+
+.post-footer {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-top: 1px solid #333;
+  background-color: #000;
+}
+
+.nav-item {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+}
+
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
