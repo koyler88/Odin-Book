@@ -16,7 +16,7 @@ export default function Home() {
     try {
       const { user, token } = await loginUser(form);
       login(user, token);
-      navigate("/dashboard");
+      navigate("/feed");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
