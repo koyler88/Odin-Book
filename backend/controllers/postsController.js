@@ -21,16 +21,22 @@ const getPostsByUserId = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
+    const { content } = req.body;
+    const imageUrl = req.file ? req.file.path : null;
+
     const post = await db.createPost({
-      title: req.body.title,
-      content: req.body.content,
+      content,
       authorId: req.user.id,
+      imageUrl,
     });
+
     res.status(201).json(post);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to create post" });
   }
 };
+
 
 const updatePost = async (req, res) => {
   try {

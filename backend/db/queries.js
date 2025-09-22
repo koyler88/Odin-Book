@@ -66,9 +66,13 @@ async function getPostsFromFollowedUsers(userId) {
   });
 }
 
-async function createPost({ title, content, authorId }) {
+async function createPost({ title, content, authorId, imageUrl }) {
   return prisma.post.create({
-    data: { title, content, authorId },
+    data: {
+      content,
+      authorId,
+      imageUrl,
+    },
   });
 }
 

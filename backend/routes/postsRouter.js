@@ -7,6 +7,8 @@ const postsController = require("../controllers/postsController");
 const likesController = require("../controllers/likesController");
 const commentsRouter = require("./commentsRouter");
 
+const { upload } = require("../config/cloudinary");
+
 // Feed: all posts
 postsRouter.get(
   "/",
@@ -24,6 +26,7 @@ postsRouter.get(
 postsRouter.post(
   "/",
   passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
   postsController.createPost
 );
 
