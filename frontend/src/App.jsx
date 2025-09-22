@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 // Page Elements
 import Home from "./pages/Home.jsx";
@@ -14,11 +15,31 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/feed" element={<Feed />} />
-      <Route path="/create" element={<CreatePost />} />
-      <Route path="/messages" element={<Messages />} />
-      <Route path="/messages/:id" element={<Conversation />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/feed" element={
+        <PrivateRoute>
+          <Feed />
+        </PrivateRoute>
+      } />
+      <Route path="/create" element={
+        <PrivateRoute>
+          <CreatePost />
+        </PrivateRoute>
+      } />
+      <Route path="/messages" element={
+        <PrivateRoute>
+          <Messages />
+        </PrivateRoute>
+      } />
+      <Route path="/messages/:id" element={
+        <PrivateRoute>
+          <Conversation />
+        </PrivateRoute>
+      } />
+      <Route path="/profile" element={
+        <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
+      } />
     </Routes>
   );
 }
