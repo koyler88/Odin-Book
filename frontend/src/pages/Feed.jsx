@@ -66,31 +66,33 @@ export default function Feed() {
       {/* Feed */}
       <main className="feed-content">
         {filteredPosts.map((post) => (
-          <div key={post.id} className="post">
-            <div className="post-header">
-              <img
-                src={post.author.profile?.avatarUrl || "https://picsum.photos/40"}
-                alt="profile"
-                className="post-avatar"
-              />
-              <span className="post-username">{post.author.username}</span>
-            </div>
-            {post.imageUrl && (
-              <img src={post.imageUrl} alt="post" className="post-image" />
-            )}
-            <div className="post-footer">
-              <div className="post-actions">
-                <button>❤️ {post._count.likes}</button>
-                <button>💬 {post._count.comments}</button>
+          <div key={post.id} className="post-wrapper">
+            <div className="post">
+              <div className="post-header">
+                <img
+                  src={post.author.profile?.avatarUrl || "https://picsum.photos/40"}
+                  alt="profile"
+                  className="post-avatar"
+                />
+                <span className="post-username">{post.author.username}</span>
               </div>
-              {post.content && (
-                <p>
-                  <strong>{post.author.username}</strong> {post.content}
-                </p>
+              {post.imageUrl && (
+                <img src={post.imageUrl} alt="post" className="post-image" />
               )}
-              <span className="post-date">
-                {new Date(post.createdAt).toLocaleString()}
-              </span>
+              <div className="post-footer">
+                <div className="post-actions">
+                  <button>❤️ {post._count.likes}</button>
+                  <button>💬 {post._count.comments}</button>
+                </div>
+                {post.content && (
+                  <p>
+                    <strong>{post.author.username}</strong> {post.content}
+                  </p>
+                )}
+                <span className="post-date">
+                  {new Date(post.createdAt).toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
         ))}
