@@ -17,13 +17,18 @@ async function findUserByUsername(username) {
 }
 
 async function createUser(username, hashedPassword) {
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       username,
       password: hashedPassword,
     },
   });
+
+  await createProfile(user.id);
+
+  return user;
 }
+
 
 async function getPostsByUserId(userId) {
   return prisma.post.findMany({
@@ -235,11 +240,12 @@ async function deleteMessage(messageId) {
 
 async function createProfile(userId) {
   // Default values can be customized as needed
+  const DEFAULT_AVATAR = "https://res.cloudinary.com/drromn4sx/image/upload/v1758656851/avatar-default-svgrepo-com_p7dw48.svg"
   return prisma.profile.create({
     data: {
       userId,
       bio: '',
-      avatarUrl: '',
+      avatarUrl: DEFAULT_AVATAR,
       location: '',
     },
   });
