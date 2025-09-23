@@ -116,13 +116,18 @@ async function deletePost(postId) {
 }
 
 async function getProfileByUserId(userId) {
-  return prisma.profile.findUnique({
+  const profile = await prisma.profile.findUnique({
     where: { userId },
     include: {
       user: true,
-      posts: true,
     },
   });
+
+  const posts = await prisma.post.findMany({
+    where: { authorId: userId },
+  });
+
+  return { ...profile, posts };
 }
 
 async function updateProfile(userId, data) {

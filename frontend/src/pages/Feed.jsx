@@ -9,6 +9,7 @@ export default function Feed() {
   const [searchQuery, setSearchQuery] = useState("");
   const [feedType, setFeedType] = useState("all");
   const [posts, setPosts] = useState([]);
+  const [profile, setProfile] = useState(null); // logged-in user's profile
 
   // Fetch posts based on feedType
   useEffect(() => {
@@ -20,12 +21,29 @@ export default function Feed() {
         });
         setPosts(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching posts:", err);
       }
     };
 
     if (user) fetchPosts();
   }, [feedType, user]);
+
+  // Fetch logged-in user's profile for avatar
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      try {
+        const res = await axios.get(`http://localhost:3000/users/me`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setProfile(res.data); // res.data now includes avatarUrl at top level
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const filteredPosts = posts.filter((post) =>
     post.author.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -105,7 +123,7 @@ export default function Feed() {
         <Link to="/messages" className="nav-item">💬</Link>
         <Link to="/profile" className="nav-item">
           <img
-            src={user?.avatar || "https://picsum.photos/28"}
+            src={profile?.avatarUrl || "https://picsum.photos/28"}
             alt="profile"
             className="nav-avatar"
           />
