@@ -1,15 +1,30 @@
 import "../styles/Feed.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 
 export default function Feed() {
   const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div className="feed-container">
       {/* Header */}
       <header className="feed-header">
         <h1 className="brand-logo">Fauxstagram</h1>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearch}
+            className="search-input"
+          />
+        </div>
       </header>
 
       {/* Feed */}
@@ -30,7 +45,9 @@ export default function Feed() {
             className="post-image"
           />
           <div className="post-footer">
-            <p><strong>user123</strong> This is a sample caption.</p>
+            <p>
+              <strong>user123</strong> This is a sample caption.
+            </p>
           </div>
         </div>
 
@@ -49,14 +66,16 @@ export default function Feed() {
             className="post-image"
           />
           <div className="post-footer">
-            <p><strong>jane_doe</strong> Loving the vibes ✨</p>
+            <p>
+              <strong>jane_doe</strong> Loving the vibes ✨
+            </p>
           </div>
         </div>
       </main>
 
       {/* Bottom Nav */}
       <nav className="bottom-nav">
-        <Link to="/" className="nav-item">
+        <Link to="/feed" className="nav-item">
           <span>🏠</span>
         </Link>
         <Link to="/create" className="nav-item">
@@ -67,9 +86,7 @@ export default function Feed() {
         </Link>
         <Link to="/profile" className="nav-item">
           <img
-            src={
-              user?.avatar || "https://picsum.photos/18"
-            }
+            src={user?.avatar || "https://picsum.photos/18"}
             alt="profile"
             className="nav-avatar"
           />
