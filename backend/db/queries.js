@@ -233,6 +233,18 @@ async function deleteMessage(messageId) {
   });
 }
 
+async function createProfile(userId) {
+  // Default values can be customized as needed
+  return prisma.profile.create({
+    data: {
+      userId,
+      bio: '',
+      avatarUrl: '',
+      location: '',
+    },
+  });
+}
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -244,6 +256,7 @@ module.exports = {
   updatePost,
   deletePost,
   getProfileByUserId,
+  createProfile,
   updateProfile,
   getCommentsByPostId,
   createComment,

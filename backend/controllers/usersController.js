@@ -16,7 +16,14 @@ const getUserProfile = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const profile = await db.getProfileByUserId(req.user.id);
+    let profile = await db.getProfileByUserId(req.user.id);
+    if (!profile) {
+      // Auto-create profile if missing
+      if (db.createProfile) {
+        await db.createProfile(req.user.id);
+        profile = await db.getProfileByUserId(req.user.id);
+      }
+    }
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
