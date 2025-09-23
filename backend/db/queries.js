@@ -4,10 +4,14 @@ async function getAllPosts() {
   return prisma.post.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      author: { select: { id: true, username: true } },
-      _count: {
-        select: { likes: true, comments: true },
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: { select: { avatarUrl: true } },
+        },
       },
+      _count: { select: { likes: true, comments: true } },
     },
   });
 }
@@ -35,16 +39,19 @@ async function getPostsByUserId(userId) {
     where: { authorId: userId },
     orderBy: { createdAt: "desc" },
     include: {
-      author: { select: { id: true, username: true } },
-      _count: {
-        select: { likes: true, comments: true },
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: { select: { avatarUrl: true } },
+        },
       },
+      _count: { select: { likes: true, comments: true } },
     },
   });
 }
 
 async function getPostsFromFollowedUsers(userId) {
-  // 1. Find all users the current user is following (status: accepted)
   const followedUsers = await prisma.follow.findMany({
     where: { followerId: userId, status: "accepted" },
     select: { followingId: true },
@@ -52,20 +59,17 @@ async function getPostsFromFollowedUsers(userId) {
 
   const followingIds = followedUsers.map((f) => f.followingId);
 
-  // 2. Get posts by those users with like & comment counts
   return prisma.post.findMany({
     where: { authorId: { in: followingIds } },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      imageUrl: true,
-      createdAt: true,
-      updatedAt: true,
-      author: { select: { id: true, username: true } },
-      _count: {
-        select: { likes: true, comments: true },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: { select: { avatarUrl: true } },
+        },
       },
+      _count: { select: { likes: true, comments: true } },
     },
     orderBy: { createdAt: "desc" },
   });
