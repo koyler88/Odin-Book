@@ -260,6 +260,28 @@ async function createProfile(userId) {
   });
 }
 
+async function findUsersByUsername(username) {
+  return prisma.user.findMany({
+    where: {
+      username: {
+        contains: username,
+        mode: "insensitive",
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+      profile: {
+        select: {
+          avatarUrl: true,
+        },
+      },
+    },
+    take: 10, // optional: limit results to 10 for performance
+  });
+}
+
+
 module.exports = {
   findUserByUsername,
   createUser,
@@ -287,4 +309,6 @@ module.exports = {
   createMessage,
   getMessageById,
   deleteMessage,
+  findUsersByUsername
 };
+

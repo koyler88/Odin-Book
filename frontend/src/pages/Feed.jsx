@@ -10,6 +10,7 @@ export default function Feed() {
   const [feedType, setFeedType] = useState("all");
   const [posts, setPosts] = useState([]);
   const [profile, setProfile] = useState(null); // logged-in user's profile
+  const [userSearchResults, setUserSearchResults] = useState([]); // for user search
 
   // Fetch posts based on feedType
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function Feed() {
         const res = await axios.get(`http://localhost:3000/users/me`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        setProfile(res.data); // res.data now includes avatarUrl at top level
+        setProfile(res.data);
       } catch (err) {
         console.error("Error fetching profile:", err);
       }
@@ -45,9 +46,29 @@ export default function Feed() {
     fetchProfile();
   }, [user]);
 
-  const filteredPosts = posts.filter((post) =>
-    post.author.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Search for users when typing
+  useEffect(() => {
+    const searchUsers = async () => {
+      if (!searchQuery) {
+        setUserSearchResults([]);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/users/search?username=${searchQuery}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        );
+        setUserSearchResults(res.data); // array of users matching query
+      } catch (err) {
+        console.error("Error searching users:", err);
+      }
+    };
+
+    searchUsers();
+  }, [searchQuery]);
 
   return (
     <div className="feed-container">
@@ -57,11 +78,28 @@ export default function Feed() {
         <div className="search-container">
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Search users"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
+          {/* Show search results */}
+          {searchQuery && userSearchResults.length > 0 && (
+            <ul className="user-search-results">
+              {userSearchResults.map((u) => (
+                <li key={u.id}>
+                  <Link to={`/profile/${u.id}`}>
+                    <img
+                      src={u.profile?.avatarUrl || "https://picsum.photos/28"}
+                      alt={u.username}
+                      className="search-avatar"
+                    />
+                    {u.username}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </header>
 
@@ -83,7 +121,7 @@ export default function Feed() {
 
       {/* Feed */}
       <main className="feed-content">
-        {filteredPosts.map((post) => (
+        {posts.map((post) => (
           <div key={post.id} className="post-wrapper">
             <div className="post">
               <div className="post-header">

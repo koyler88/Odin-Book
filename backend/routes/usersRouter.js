@@ -8,6 +8,8 @@ const followsController = require("../controllers/followsController");
 
 usersRouter.get("/:id/profile", usersController.getUserProfile);
 
+usersRouter.get("/search", usersController.searchUsers);
+
 usersRouter.get(
   "/me",
   passport.authenticate("jwt", { session: false }),

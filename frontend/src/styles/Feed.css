@@ -30,6 +30,7 @@
 
 .search-container {
   flex-shrink: 0;
+  position: relative;
 }
 
 .search-input {
@@ -225,3 +226,49 @@
 }
 
 /* Keep other existing styles as before */
+
+/* User search results dropdown */
+.user-search-results {
+  position: absolute; /* make it float over content */
+  top: 100%; /* right below input */
+  left: 0;
+  width: 100%; /* same width as input container */
+  max-height: 250px; /* limit height */
+  overflow-y: auto; /* scroll if too many results */
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin-top: 4px;
+  padding: 0.5rem 0;
+  list-style: none;
+  z-index: 50; /* above other content */
+}
+
+.user-search-results li {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+
+.user-search-results li:hover {
+  background-color: #222;
+}
+
+.user-search-results a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.search-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
