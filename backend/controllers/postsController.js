@@ -90,13 +90,16 @@ const deletePost = async (req, res) => {
       return res.status(403).json({ error: "You cannot delete this post" });
     }
 
-    // Perform deletion
+    // Delete post along with its comments and likes
     await db.deletePost(Number(postId));
+
     res.sendStatus(204);
   } catch (error) {
+    console.error(error); // log actual error for debugging
     res.status(500).json({ error: "Failed to delete post" });
   }
 };
+
 
 const getFollowingFeed = async (req, res) => {
   try {

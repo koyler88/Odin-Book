@@ -110,10 +110,16 @@ async function updatePost({ title, content, postId }) {
 }
 
 async function deletePost(postId) {
-  return prisma.post.delete({
-    where: { id: postId },
-  });
+  // Delete all comments for this post
+  await prisma.comment.deleteMany({ where: { postId } });
+
+  // Delete all likes for this post
+  await prisma.like.deleteMany({ where: { postId } });
+
+  // Finally, delete the post itself
+  return prisma.post.delete({ where: { id: postId } });
 }
+
 
 async function getProfileByUserId(userId) {
   const profile = await prisma.profile.findUnique({

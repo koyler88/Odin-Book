@@ -31,13 +31,13 @@ postsRouter.post(
 );
 
 postsRouter.put(
-  "/",
+  "/:postId",
   passport.authenticate("jwt", { session: false }),
   postsController.updatePost
 );
 
 postsRouter.delete(
-  "/",
+  "/:postId",
   passport.authenticate("jwt", { session: false }),
   postsController.deletePost
 );
