@@ -5,7 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { id } = useParams();
   const isMyProfile = !id || Number(id) === user.id;
 
@@ -96,7 +96,7 @@ export default function Profile() {
     };
     fetchPosts();
   }, [profile]);
-
+  ``;
   // Profile save
   const handleSave = async () => {
     try {
@@ -241,10 +241,19 @@ export default function Profile() {
         <div className="profile-info">
           <div className="profile-top">
             <h2 className="username">{profile.user.username}</h2>
+
             {isMyProfile ? (
-              <button className="edit-btn" onClick={() => setEditing(!editing)}>
-                {editing ? "Cancel" : "Edit Profile"}
-              </button>
+              <div className="profile-actions">
+                <button
+                  className="edit-btn"
+                  onClick={() => setEditing(!editing)}
+                >
+                  {editing ? "Cancel" : "Edit Profile"}
+                </button>
+                <button className="logout-btn" onClick={logout}>
+                  Logout
+                </button>
+              </div>
             ) : (
               <button className="edit-btn" onClick={toggleFollow}>
                 {isFollowing ? "Unfollow" : "Follow"}
