@@ -127,12 +127,23 @@ async function getProfileByUserId(userId) {
 
   const posts = await prisma.post.findMany({ where: { authorId: userId } });
 
+  // Get counts
+  const followersCount = await prisma.follow.count({
+    where: { followingId: userId, status: "accepted" },
+  });
+  const followingCount = await prisma.follow.count({
+    where: { followerId: userId, status: "accepted" },
+  });
+
   return {
     ...profile,
     user: profile.user || { id: userId, username: "Unknown" },
     posts,
+    followersCount,
+    followingCount,
   };
 }
+
 
 async function updateProfile(userId, data) {
   return prisma.profile.update({

@@ -135,27 +135,33 @@ export default function Profile() {
   };
 
   const toggleFollow = async () => {
-    try {
-      if (isFollowing) {
-        await axios.delete(`http://localhost:3000/users/${id}/follow`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-      } else {
-        await axios.post(
-          `http://localhost:3000/users/${id}/follow`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-      }
-      setIsFollowing(!isFollowing);
-    } catch (err) {
-      console.error(err);
+  try {
+    if (isFollowing) {
+      await axios.delete(`http://localhost:3000/users/${id}/follow`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+    } else {
+      await axios.post(
+        `http://localhost:3000/users/${id}/follow`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
     }
-  };
+
+    setIsFollowing(!isFollowing);
+
+    // Refetch profile to get updated follower/following counts
+    const url = isMyProfile ? "/users/me" : `/users/${id}/profile`;
+    const res = await axios.get(`http://localhost:3000${url}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    setProfile(res.data);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   // Post delete
   const handleDeletePost = async (postId) => {
