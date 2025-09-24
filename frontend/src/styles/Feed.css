@@ -127,6 +127,16 @@
   color: #fff;
 }
 
+.post-username a {
+  color: inherit; /* keeps same color as username */
+  text-decoration: none;
+}
+
+.post-username a:hover {
+  text-decoration: underline;
+}
+
+
 .post-image {
   width: 100%;
   max-height: 500px;

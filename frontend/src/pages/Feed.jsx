@@ -227,7 +227,11 @@ export default function Feed() {
                     alt="profile"
                     className="post-avatar"
                   />
-                  <span className="post-username">{post.author.username}</span>
+                  <span className="post-username">
+                    <Link to={`/profile/${post.author.id}`}>
+                      {post.author.username}
+                    </Link>
+                  </span>
                 </div>
                 {post.imageUrl && (
                   <img src={post.imageUrl} alt="post" className="post-image" />
