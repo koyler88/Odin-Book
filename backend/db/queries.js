@@ -1,4 +1,5 @@
 const prisma = require("./prismaClient");
+const cloudinary = require("cloudinary").v2;
 
 async function getAllPosts() {
   return prisma.post.findMany({
@@ -117,16 +118,18 @@ async function deletePost(postId) {
 async function getProfileByUserId(userId) {
   const profile = await prisma.profile.findUnique({
     where: { userId },
-    include: {
-      user: true,
-    },
+    include: { user: true },
   });
 
-  const posts = await prisma.post.findMany({
-    where: { authorId: userId },
-  });
+  if (!profile) return null;
 
-  return { ...profile, posts };
+  const posts = await prisma.post.findMany({ where: { authorId: userId } });
+
+  return {
+    ...profile,
+    user: profile.user || { id: userId, username: "Unknown" },
+    posts,
+  };
 }
 
 async function updateProfile(userId, data) {
@@ -137,6 +140,7 @@ async function updateProfile(userId, data) {
       avatarUrl: data.avatarUrl,
       location: data.location,
     },
+    include: { user: true },
   });
 }
 
@@ -308,7 +312,7 @@ async function getPostsFromFollowedUsersWithUserLike(userId) {
     where: { followerId: userId, status: "accepted" },
     select: { followingId: true },
   });
-  const followingIds = followedUsers.map(f => f.followingId);
+  const followingIds = followedUsers.map((f) => f.followingId);
 
   return prisma.post.findMany({
     where: { authorId: { in: followingIds } },
@@ -330,6 +334,13 @@ async function getPostsFromFollowedUsersWithUserLike(userId) {
   });
 }
 
+async function getFollow(followerId, followingId) {
+  return prisma.follow.findUnique({
+    where: {
+      followerId_followingId: { followerId, followingId },
+    },
+  });
+}
 
 module.exports = {
   findUserByUsername,
@@ -360,5 +371,6 @@ module.exports = {
   deleteMessage,
   findUsersByUsername,
   getAllPostsWithUserLike,
-  getPostsFromFollowedUsersWithUserLike
+  getPostsFromFollowedUsersWithUserLike,
+  getFollow,
 };

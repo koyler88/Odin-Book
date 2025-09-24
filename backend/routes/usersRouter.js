@@ -1,31 +1,42 @@
 const { Router } = require("express");
-const usersRouter = Router();
-
 const passport = require("passport");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const usersController = require("../controllers/usersController");
 const followsController = require("../controllers/followsController");
 
-usersRouter.get("/:id/profile", usersController.getUserProfile);
+const router = Router();
 
-usersRouter.get("/search", usersController.searchUsers);
+// Profile
+router.get("/:id/profile", usersController.getUserProfile);
+router.get("/search", usersController.searchUsers);
 
-usersRouter.get(
+router.get(
   "/me",
   passport.authenticate("jwt", { session: false }),
   usersController.getMyProfile
 );
 
-usersRouter.put(
+router.put(
   "/me",
   passport.authenticate("jwt", { session: false }),
   usersController.updateMyProfile
 );
 
+// Profile avatar upload
+router.post(
+  "/me/avatar",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("avatar"),
+  usersController.uploadAvatar
+);
+
 // Follow/unfollow
+router.post("/:id/follow", passport.authenticate("jwt", { session: false }), followsController.followUser);
+router.delete("/:id/follow", passport.authenticate("jwt", { session: false }), followsController.unfollowUser);
 
-usersRouter.post("/:id/follow", followsController.followUser);
+// Check if following
+router.get("/:id/is-following", passport.authenticate("jwt", { session: false }), followsController.isFollowing);
 
-usersRouter.delete("/:id/follow", followsController.unfollowUser);
-
-module.exports = usersRouter;
+module.exports = router;

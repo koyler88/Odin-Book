@@ -5,13 +5,9 @@ const followUser = async (req, res) => {
     const followingId = Number(req.params.id);
     const followerId = req.user.id;
 
-    if (followingId === followerId) {
-      return res.status(400).json({ error: "You cannot follow yourself" });
-    }
-
     const follow = await db.createFollow(followerId, followingId);
-    res.status(201).json(follow);
-  } catch (error) {
+    res.status(200).json(follow);
+  } catch (err) {
     res.status(500).json({ error: "Failed to follow user" });
   }
 };
@@ -22,13 +18,22 @@ const unfollowUser = async (req, res) => {
     const followerId = req.user.id;
 
     await db.deleteFollow(followerId, followingId);
-    res.sendStatus(204);
-  } catch (error) {
+    res.status(200).json({ success: true });
+  } catch (err) {
     res.status(500).json({ error: "Failed to unfollow user" });
   }
 };
 
-module.exports = {
-  followUser,
-  unfollowUser,
+const isFollowing = async (req, res) => {
+  try {
+    const followingId = Number(req.params.id);
+    const followerId = req.user.id;
+
+    const follow = await db.getFollow(followerId, followingId);
+    res.status(200).json({ isFollowing: !!follow });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to check follow status" });
+  }
 };
+
+module.exports = { followUser, unfollowUser, isFollowing };
