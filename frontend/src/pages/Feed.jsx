@@ -12,6 +12,8 @@ export default function Feed() {
   const [profile, setProfile] = useState(null);
   const [userSearchResults, setUserSearchResults] = useState([]);
   const [commentInputs, setCommentInputs] = useState({});
+  const [expandedComments, setExpandedComments] = useState({});
+  const [postComments, setPostComments] = useState({});
 
   // Fetch posts
   useEffect(() => {
@@ -68,6 +70,31 @@ export default function Feed() {
     };
     searchUsers();
   }, [searchQuery]);
+
+  // Fetch Comments
+  const fetchComments = async (postId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/posts/${postId}/comments`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setPostComments((prev) => ({ ...prev, [postId]: res.data }));
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
+  };
+
+  const toggleComments = async (postId) => {
+    const isExpanded = expandedComments[postId];
+    setExpandedComments((prev) => ({ ...prev, [postId]: !isExpanded }));
+
+    // Fetch comments if not already fetched
+    if (!postComments[postId]) {
+      await fetchComments(postId);
+    }
+  };
 
   // Toggle like
   const toggleLike = async (postId, liked) => {
@@ -217,6 +244,27 @@ export default function Feed() {
                       <strong>{post.author.username}</strong> {post.content}
                     </p>
                   )}
+                  {post._count.comments > 0 && (
+                    <button
+                      className="view-comments-btn"
+                      onClick={() => toggleComments(post.id)}
+                    >
+                      {expandedComments[post.id]
+                        ? "Hide comments"
+                        : `View ${post._count.comments} comment${
+                            post._count.comments > 1 ? "s" : ""
+                          }`}
+                    </button>
+                  )}
+
+                  {/* Render comments if expanded */}
+                  {expandedComments[post.id] &&
+                    postComments[post.id]?.map((c) => (
+                      <p key={c.id} className="comment">
+                        <strong>{c.author.username}</strong> {c.content}
+                      </p>
+                    ))}
+
                   <span className="post-date">
                     {new Date(post.createdAt).toLocaleString()}
                   </span>

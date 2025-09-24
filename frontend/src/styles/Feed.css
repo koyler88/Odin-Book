@@ -299,3 +299,72 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+/* View Comments Button */
+.view-comments-btn {
+  background: none;
+  border: none;
+  color: #aaa; /* subtle gray for inactive state */
+  font-size: 0.875rem; /* slightly smaller than main text */
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-align: left; /* left-align text */
+  margin: 4px 0 2px 5px; /* spacing above/below + slight indent */
+  transition: color 0.2s;
+}
+
+.view-comments-btn:hover {
+  color: #fff; /* white on hover */
+  text-decoration: underline; /* subtle hover underline */
+}
+
+/* Individual Comments */
+.comment {
+  margin-left: 10px; /* indent for separation from post content */
+  font-size: 0.875rem; /* small but readable like Instagram */
+  line-height: 1.2rem;
+  color: #ddd; /* light gray for subtle text */
+  display: flex;
+  gap: 4px; /* space between username and comment text */
+}
+
+.comment strong {
+  font-weight: 600;
+  color: #fff; /* usernames in white to stand out */
+}
+
+/* Optional: small spacing between consecutive comments */
+.comment + .comment {
+  margin-top: 2px;
+}
+
+/* Comment Input Box (already existing) */
+.comment-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.comment-box input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: #262626;
+  color: #fff;
+}
+
+.comment-box input:focus {
+  outline: none;
+  background: #333;
+}
+
+.comment-box button {
+  background: none;
+  border: none;
+  color: #3897f0;
+  font-weight: bold;
+  cursor: pointer;
+}
+
