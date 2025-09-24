@@ -33,7 +33,6 @@ async function createUser(username, hashedPassword) {
   return user;
 }
 
-
 async function getPostsByUserId(userId) {
   return prisma.post.findMany({
     where: { authorId: userId },
@@ -249,13 +248,14 @@ async function deleteMessage(messageId) {
 
 async function createProfile(userId) {
   // Default values can be customized as needed
-  const DEFAULT_AVATAR = "https://res.cloudinary.com/drromn4sx/image/upload/v1758656851/avatar-default-svgrepo-com_p7dw48.svg"
+  const DEFAULT_AVATAR =
+    "https://res.cloudinary.com/drromn4sx/image/upload/v1758656851/avatar-default-svgrepo-com_p7dw48.svg";
   return prisma.profile.create({
     data: {
       userId,
-      bio: '',
+      bio: "",
       avatarUrl: DEFAULT_AVATAR,
-      location: '',
+      location: "",
     },
   });
 }
@@ -278,6 +278,55 @@ async function findUsersByUsername(username) {
       },
     },
     take: 10, // optional: limit results to 10 for performance
+  });
+}
+
+// Get all posts including whether a specific user liked them
+async function getAllPostsWithUserLike(userId) {
+  return prisma.post.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: { select: { avatarUrl: true } },
+        },
+      },
+      _count: { select: { likes: true, comments: true } },
+      likes: {
+        where: { userId }, // only likes by this user
+        select: { id: true },
+      },
+    },
+  });
+}
+
+// Get posts from followed users including whether the specific user liked them
+async function getPostsFromFollowedUsersWithUserLike(userId) {
+  const followedUsers = await prisma.follow.findMany({
+    where: { followerId: userId, status: "accepted" },
+    select: { followingId: true },
+  });
+  const followingIds = followedUsers.map(f => f.followingId);
+
+  return prisma.post.findMany({
+    where: { authorId: { in: followingIds } },
+    include: {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          profile: { select: { avatarUrl: true } },
+        },
+      },
+      _count: { select: { likes: true, comments: true } },
+      likes: {
+        where: { userId },
+        select: { id: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
 }
 
@@ -309,6 +358,7 @@ module.exports = {
   createMessage,
   getMessageById,
   deleteMessage,
-  findUsersByUsername
+  findUsersByUsername,
+  getAllPostsWithUserLike,
+  getPostsFromFollowedUsersWithUserLike
 };
-

@@ -272,3 +272,30 @@
   object-fit: cover;
 }
 
+.comment-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.comment-box input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: #262626;
+  color: #fff;
+}
+
+.comment-box input:focus {
+  outline: none;
+  background: #333;
+}
+
+.comment-box button {
+  background: none;
+  border: none;
+  color: #3897f0;
+  font-weight: bold;
+  cursor: pointer;
+}

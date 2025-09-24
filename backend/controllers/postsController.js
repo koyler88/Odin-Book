@@ -2,9 +2,19 @@ const db = require("../db/queries");
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await db.getAllPosts();
-    res.json(posts);
+    const userId = req.user.id; // need logged-in user to check likes
+    const posts = await db.getAllPostsWithUserLike(userId);
+
+    // Map likes to likedByUser boolean
+    const postsWithLikedFlag = posts.map(post => ({
+      ...post,
+      likedByUser: post.likes.length > 0,
+      likes: undefined, // remove raw likes array if you want
+    }));
+
+    res.json(postsWithLikedFlag);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch posts" });
   }
 };
@@ -91,10 +101,17 @@ const deletePost = async (req, res) => {
 const getFollowingFeed = async (req, res) => {
   try {
     const userId = req.user.id;
+    const posts = await db.getPostsFromFollowedUsersWithUserLike(userId);
 
-    const posts = await db.getPostsFromFollowedUsers(userId);
-    res.json(posts);
+    const postsWithLikedFlag = posts.map(post => ({
+      ...post,
+      likedByUser: post.likes.length > 0,
+      likes: undefined,
+    }));
+
+    res.json(postsWithLikedFlag);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch following feed" });
   }
 };

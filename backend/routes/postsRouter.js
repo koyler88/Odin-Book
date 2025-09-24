@@ -48,9 +48,9 @@ postsRouter.use("/:postId/comments", commentsRouter);
 
 // Likes
 
-postsRouter.post("/:postId/like", likesController.likePost);
+postsRouter.post("/:postId/like", passport.authenticate("jwt", {session: false}), likesController.likePost);
 
-postsRouter.delete("/:postId/like", likesController.unlikePost);
+postsRouter.delete("/:postId/like", passport.authenticate("jwt", {session: false}), likesController.unlikePost);
 
 // Following feed
 

@@ -9,10 +9,11 @@ export default function Feed() {
   const [searchQuery, setSearchQuery] = useState("");
   const [feedType, setFeedType] = useState("all");
   const [posts, setPosts] = useState([]);
-  const [profile, setProfile] = useState(null); // logged-in user's profile
-  const [userSearchResults, setUserSearchResults] = useState([]); // for user search
+  const [profile, setProfile] = useState(null);
+  const [userSearchResults, setUserSearchResults] = useState([]);
+  const [commentInputs, setCommentInputs] = useState({});
 
-  // Fetch posts based on feedType
+  // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -25,11 +26,10 @@ export default function Feed() {
         console.error("Error fetching posts:", err);
       }
     };
-
     if (user) fetchPosts();
   }, [feedType, user]);
 
-  // Fetch logged-in user's profile for avatar
+  // Fetch logged-in user's profile
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
@@ -42,33 +42,99 @@ export default function Feed() {
         console.error("Error fetching profile:", err);
       }
     };
-
     fetchProfile();
   }, [user]);
 
-  // Search for users when typing
+  // Search users
   useEffect(() => {
     const searchUsers = async () => {
       if (!searchQuery) {
         setUserSearchResults([]);
         return;
       }
-
       try {
         const res = await axios.get(
           `http://localhost:3000/users/search?username=${searchQuery}`,
           {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
         );
-        setUserSearchResults(res.data); // array of users matching query
+        setUserSearchResults(res.data);
       } catch (err) {
         console.error("Error searching users:", err);
       }
     };
-
     searchUsers();
   }, [searchQuery]);
+
+  // Toggle like
+  const toggleLike = async (postId, liked) => {
+    try {
+      if (liked) {
+        await axios.delete(`http://localhost:3000/posts/${postId}/like`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+      } else {
+        await axios.post(
+          `http://localhost:3000/posts/${postId}/like`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
+      // refresh posts after like/unlike
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                _count: {
+                  ...p._count,
+                  likes: liked ? p._count.likes - 1 : p._count.likes + 1,
+                },
+                likedByUser: !liked,
+              }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
+  };
+
+  // Add comment
+  const addComment = async (postId) => {
+    const content = commentInputs[postId];
+    if (!content) return;
+    try {
+      await axios.post(
+        `http://localhost:3000/posts/${postId}/comments`,
+        { content },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      // reset input + increment comment count
+      setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                _count: { ...p._count, comments: p._count.comments + 1 },
+              }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
 
   return (
     <div className="feed-container">
@@ -83,7 +149,6 @@ export default function Feed() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          {/* Show search results */}
           {searchQuery && userSearchResults.length > 0 && (
             <ul className="user-search-results">
               {userSearchResults.map((u) => (
@@ -121,44 +186,73 @@ export default function Feed() {
 
       {/* Feed */}
       <main className="feed-content">
-        {posts.map((post) => (
-          <div key={post.id} className="post-wrapper">
-            <div className="post">
-              <div className="post-header">
-                <img
-                  src={post.author.profile?.avatarUrl || "https://picsum.photos/40"}
-                  alt="profile"
-                  className="post-avatar"
-                />
-                <span className="post-username">{post.author.username}</span>
-              </div>
-              {post.imageUrl && (
-                <img src={post.imageUrl} alt="post" className="post-image" />
-              )}
-              <div className="post-footer">
-                <div className="post-actions">
-                  <button>❤️ {post._count.likes}</button>
-                  <button>💬 {post._count.comments}</button>
+        {posts.map((post) => {
+          const liked = post.likedByUser || false;
+          return (
+            <div key={post.id} className="post-wrapper">
+              <div className="post">
+                <div className="post-header">
+                  <img
+                    src={
+                      post.author.profile?.avatarUrl ||
+                      "https://picsum.photos/40"
+                    }
+                    alt="profile"
+                    className="post-avatar"
+                  />
+                  <span className="post-username">{post.author.username}</span>
                 </div>
-                {post.content && (
-                  <p>
-                    <strong>{post.author.username}</strong> {post.content}
-                  </p>
+                {post.imageUrl && (
+                  <img src={post.imageUrl} alt="post" className="post-image" />
                 )}
-                <span className="post-date">
-                  {new Date(post.createdAt).toLocaleString()}
-                </span>
+                <div className="post-footer">
+                  <div className="post-actions">
+                    <button onClick={() => toggleLike(post.id, liked)}>
+                      {liked ? "💖" : "🤍"} {post._count.likes}
+                    </button>
+                    <button>💬 {post._count.comments}</button>
+                  </div>
+                  {post.content && (
+                    <p>
+                      <strong>{post.author.username}</strong> {post.content}
+                    </p>
+                  )}
+                  <span className="post-date">
+                    {new Date(post.createdAt).toLocaleString()}
+                  </span>
+                  {/* Comment input */}
+                  <div className="comment-box">
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      value={commentInputs[post.id] || ""}
+                      onChange={(e) =>
+                        setCommentInputs((prev) => ({
+                          ...prev,
+                          [post.id]: e.target.value,
+                        }))
+                      }
+                    />
+                    <button onClick={() => addComment(post.id)}>Post</button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </main>
 
       {/* Bottom Nav */}
       <nav className="bottom-nav">
-        <Link to="/feed" className="nav-item">🏠</Link>
-        <Link to="/create" className="nav-item">➕</Link>
-        <Link to="/messages" className="nav-item">💬</Link>
+        <Link to="/feed" className="nav-item">
+          🏠
+        </Link>
+        <Link to="/create" className="nav-item">
+          ➕
+        </Link>
+        <Link to="/messages" className="nav-item">
+          💬
+        </Link>
         <Link to="/profile" className="nav-item">
           <img
             src={profile?.avatarUrl || "https://picsum.photos/28"}
