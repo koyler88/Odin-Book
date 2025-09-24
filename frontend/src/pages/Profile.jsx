@@ -17,6 +17,7 @@ export default function Profile() {
     location: "",
     avatarFile: null,
   });
+  const [myAvatar, setMyAvatar] = useState(null);
   const [preview, setPreview] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -24,6 +25,22 @@ export default function Profile() {
   const [editingPost, setEditingPost] = useState(null);
   const [editingPostFile, setEditingPostFile] = useState(null);
   const [editingPostCaption, setEditingPostCaption] = useState("");
+
+  // Fetch logged-in user avatar for bottom nav
+  useEffect(() => {
+    const fetchMyAvatar = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/users/me", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setMyAvatar(res.data.avatarUrl || null);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchMyAvatar();
+  }, []);
 
   // Fetch profile
   useEffect(() => {
@@ -135,33 +152,35 @@ export default function Profile() {
   };
 
   const toggleFollow = async () => {
-  try {
-    if (isFollowing) {
-      await axios.delete(`http://localhost:3000/users/${id}/follow`, {
+    try {
+      if (isFollowing) {
+        await axios.delete(`http://localhost:3000/users/${id}/follow`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+      } else {
+        await axios.post(
+          `http://localhost:3000/users/${id}/follow`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
+
+      setIsFollowing(!isFollowing);
+
+      // Refetch profile to get updated follower/following counts
+      const url = isMyProfile ? "/users/me" : `/users/${id}/profile`;
+      const res = await axios.get(`http://localhost:3000${url}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-    } else {
-      await axios.post(
-        `http://localhost:3000/users/${id}/follow`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      setProfile(res.data);
+    } catch (err) {
+      console.error(err);
     }
-
-    setIsFollowing(!isFollowing);
-
-    // Refetch profile to get updated follower/following counts
-    const url = isMyProfile ? "/users/me" : `/users/${id}/profile`;
-    const res = await axios.get(`http://localhost:3000${url}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-    setProfile(res.data);
-
-  } catch (err) {
-    console.error(err);
-  }
-};
-
+  };
 
   // Post delete
   const handleDeletePost = async (postId) => {
@@ -371,7 +390,7 @@ export default function Profile() {
         </Link>
         <Link to="/profile" className="nav-item">
           <img
-            src={profile?.avatarUrl || "https://picsum.photos/28"}
+            src={myAvatar || "https://picsum.photos/28"}
             alt="profile"
             className="nav-avatar"
           />
