@@ -33,6 +33,7 @@ postsRouter.post(
 postsRouter.put(
   "/:postId",
   passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
   postsController.updatePost
 );
 

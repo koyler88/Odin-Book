@@ -12,13 +12,18 @@ export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({ bio: "", location: "", avatarFile: null });
+  const [formData, setFormData] = useState({
+    bio: "",
+    location: "",
+    avatarFile: null,
+  });
   const [preview, setPreview] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
 
   // Post editing
   const [editingPost, setEditingPost] = useState(null);
   const [editingPostFile, setEditingPostFile] = useState(null);
+  const [editingPostCaption, setEditingPostCaption] = useState("");
 
   // Fetch profile
   useEffect(() => {
@@ -62,7 +67,9 @@ export default function Profile() {
         const res = await axios.get(
           `http://localhost:3000/posts/user/${profile.userId}`,
           {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
         );
         setPosts(res.data);
@@ -80,7 +87,9 @@ export default function Profile() {
       const res = await axios.put(
         "http://localhost:3000/users/me",
         { bio: formData.bio, location: formData.location },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
 
       let updatedProfile = res.data;
@@ -135,7 +144,11 @@ export default function Profile() {
         await axios.post(
           `http://localhost:3000/users/${id}/follow`,
           {},
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
       }
       setIsFollowing(!isFollowing);
@@ -159,13 +172,13 @@ export default function Profile() {
 
   // Post save
   const handleSavePostEdit = async () => {
-    if (!editingPostFile) return alert("Choose an image to update");
     try {
       const formData = new FormData();
-      formData.append("image", editingPostFile);
+      if (editingPostFile) formData.append("image", editingPostFile);
+      formData.append("content", editingPostCaption);
 
-      const res = await axios.post(
-        `http://localhost:3000/posts/${editingPost.id}/image`,
+      const res = await axios.put(
+        `http://localhost:3000/posts/${editingPost.id}`,
         formData,
         {
           headers: {
@@ -178,6 +191,7 @@ export default function Profile() {
       setPosts(posts.map((p) => (p.id === editingPost.id ? res.data : p)));
       setEditingPost(null);
       setEditingPostFile(null);
+      setEditingPostCaption("");
     } catch (err) {
       console.error(err);
     }
@@ -226,7 +240,9 @@ export default function Profile() {
                 type="text"
                 placeholder="Bio"
                 value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, bio: e.target.value })
+                }
               />
               <input
                 type="text"
@@ -237,16 +253,26 @@ export default function Profile() {
                 }
               />
               <div className="edit-buttons">
-                <button onClick={handleSave} className="save-btn">Save</button>
-                <button onClick={handleCancel} className="cancel-btn">Cancel</button>
+                <button onClick={handleSave} className="save-btn">
+                  Save
+                </button>
+                <button onClick={handleCancel} className="cancel-btn">
+                  Cancel
+                </button>
               </div>
             </div>
           )}
 
           <div className="stats-section">
-            <span><strong>{posts.length}</strong> posts</span>
-            <span><strong>{profile.followersCount || 0}</strong> followers</span>
-            <span><strong>{profile.followingCount || 0}</strong> following</span>
+            <span>
+              <strong>{posts.length}</strong> posts
+            </span>
+            <span>
+              <strong>{profile.followersCount || 0}</strong> followers
+            </span>
+            <span>
+              <strong>{profile.followingCount || 0}</strong> following
+            </span>
           </div>
           <div className="bio">{profile.bio}</div>
         </div>
@@ -264,10 +290,12 @@ export default function Profile() {
                   onClick={() => {
                     setEditingPost(post);
                     setEditingPostFile(null);
+                    setEditingPostCaption(post.content || "");
                   }}
                 >
                   Edit
                 </button>
+
                 <button
                   className="post-delete-btn"
                   onClick={() => handleDeletePost(post.id)}
@@ -285,7 +313,11 @@ export default function Profile() {
         <div className="edit-post-modal">
           <h3>Edit Post</h3>
           <img
-            src={editingPostFile ? URL.createObjectURL(editingPostFile) : editingPost.imageUrl}
+            src={
+              editingPostFile
+                ? URL.createObjectURL(editingPostFile)
+                : editingPost.imageUrl
+            }
             alt="preview"
             className="edit-post-preview"
           />
@@ -294,9 +326,28 @@ export default function Profile() {
             accept="image/*"
             onChange={(e) => setEditingPostFile(e.target.files[0])}
           />
+          <textarea
+            placeholder="Edit caption"
+            value={editingPostCaption}
+            onChange={(e) => setEditingPostCaption(e.target.value)}
+            className="edit-post-caption"
+            style={{
+              background: "#111",
+              color: "#fff",
+              border: "1px solid #444",
+              borderRadius: "6px",
+              padding: "0.3rem",
+              width: "100%",
+              resize: "none",
+            }}
+          />
           <div className="edit-buttons">
-            <button onClick={handleSavePostEdit} className="save-btn">Save</button>
-            <button onClick={handleCancelPostEdit} className="cancel-btn">Cancel</button>
+            <button onClick={handleSavePostEdit} className="save-btn">
+              Save
+            </button>
+            <button onClick={handleCancelPostEdit} className="cancel-btn">
+              Cancel
+            </button>
           </div>
         </div>
       )}

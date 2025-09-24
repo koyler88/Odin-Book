@@ -97,17 +97,13 @@ async function getPostById(postId) {
   });
 }
 
-async function updatePost({ title, content, postId }) {
+async function updatePost({ postId, content, imageUrl }) {
   return prisma.post.update({
-    where: {
-      id: postId,
-    },
-    data: {
-      title,
-      content,
-    },
+    where: { id: postId },
+    data: { content, imageUrl },
   });
 }
+
 
 async function deletePost(postId) {
   // Delete all comments for this post

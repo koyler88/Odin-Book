@@ -51,29 +51,27 @@ const createPost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { postId } = req.params;
-
-    // Fetch the existing post
     const existingPost = await db.getPostById(Number(postId));
-    if (!existingPost) {
-      return res.status(404).json({ error: "Post not found" });
-    }
+    if (!existingPost) return res.status(404).json({ error: "Post not found" });
+    if (existingPost.authorId !== req.user.id) return res.status(403).json({ error: "You cannot edit this post" });
 
-    // Ownership check
-    if (existingPost.authorId !== req.user.id) {
-      return res.status(403).json({ error: "You cannot edit this post" });
-    }
+    // Handle image upload if present
+    let imageUrl = existingPost.imageUrl;
+    if (req.file) imageUrl = req.file.path;
 
-    // Perform update
     const updatedPost = await db.updatePost({
-      title: req.body.title,
-      content: req.body.content,
       postId: Number(postId),
+      content: req.body.content,
+      imageUrl,
     });
+
     res.status(200).json(updatedPost);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to update post" });
   }
 };
+
 
 const deletePost = async (req, res) => {
   try {
