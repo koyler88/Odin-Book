@@ -21,7 +21,7 @@ const unlikePost = async (req, res) => {
     const postId = Number(req.params.postId);
     const userId = req.user.id;
 
-    const unlike = await db.removeLike({ postId, userId });
+    await db.removeLike({ postId, userId });
     res.sendStatus(204);
   } catch (error) {
     res.status(500).json({ error: "Failed to unlike post" });
