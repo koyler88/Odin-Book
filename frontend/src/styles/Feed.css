@@ -87,7 +87,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 0 0.75rem 1rem; /* bottom padding for nav */
+  padding: 0 0.75rem 5.5rem; /* extra bottom padding for nav */
 }
 
 /* Posts */
