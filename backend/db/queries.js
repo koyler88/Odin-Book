@@ -212,18 +212,20 @@ async function deleteFollow(followerId, followingId) {
   });
 }
 
+
 async function getMessagesForUser(userId) {
   return prisma.message.findMany({
     where: {
       OR: [{ authorId: userId }, { recipientId: userId }],
     },
     include: {
-      author: { select: { id: true, username: true } },
-      recipient: { select: { id: true, username: true } },
+      author: { select: { id: true, username: true, profile: { select: { avatarUrl: true } } } },
+      recipient: { select: { id: true, username: true, profile: { select: { avatarUrl: true } } } },
     },
     orderBy: { createdAt: "asc" },
   });
 }
+
 
 async function getConversation(userId, otherUserId) {
   return prisma.message.findMany({
@@ -234,8 +236,8 @@ async function getConversation(userId, otherUserId) {
       ],
     },
     include: {
-      author: { select: { id: true, username: true } },
-      recipient: { select: { id: true, username: true } },
+      author: { select: { id: true, username: true, profile: { select: { avatarUrl: true } } } },
+      recipient: { select: { id: true, username: true, profile: { select: { avatarUrl: true } } } },
     },
     orderBy: { createdAt: "asc" },
   });
