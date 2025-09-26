@@ -18,7 +18,8 @@ export default function Register() {
       await registerUser(form);
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed. Try again.");
+      console.log(err)
+      setError(err.response?.data?.errors[0].msg || "Registration failed. Try again.");
     }
   };
 

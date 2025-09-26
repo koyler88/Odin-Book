@@ -18,7 +18,8 @@ export default function Home() {
       login(user, token);
       navigate("/feed");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      console.log(err)
+      setError(err.response?.data?.message || err.response.data.errors[0].msg || "Login failed");
     }
   };
 
