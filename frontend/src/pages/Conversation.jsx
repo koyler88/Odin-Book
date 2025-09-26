@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Conversation() {
     const { user } = useAuth();
@@ -18,7 +19,7 @@ export default function Conversation() {
     const fetchConversation = async () => {
         try {
             const res = await axios.get(
-                `http://localhost:3000/messages/conversations/${id}`,
+                `${API_URL}/messages/conversations/${id}`,
                 {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }
@@ -37,7 +38,7 @@ export default function Conversation() {
             let avatarUrl = undefined;
             try {
                 const userRes = await axios.get(
-                    `http://localhost:3000/users/${otherUserId}/profile`
+                    `${API_URL}/users/${otherUserId}/profile`
                 );
                 avatarUrl = userRes.data.avatarUrl;
                 if (!otherUsername) otherUsername = userRes.data.user.username;
@@ -56,7 +57,7 @@ export default function Conversation() {
                 let otherUsername = "";
                 try {
                     const userRes = await axios.get(
-                        `http://localhost:3000/users/${id}/profile`
+                        `${API_URL}/users/${id}/profile`
                     );
                     avatarUrl = userRes.data.avatarUrl;
                     otherUsername = userRes.data.user.username;
@@ -85,7 +86,7 @@ export default function Conversation() {
         const fetchProfile = async () => {
             if (!user) return;
             try {
-                const res = await axios.get(`http://localhost:3000/users/me`, {
+                const res = await axios.get(`${API_URL}/users/me`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 setProfile(res.data);
@@ -107,7 +108,7 @@ export default function Conversation() {
         if (!input.trim()) return;
         try {
             await axios.post(
-                "http://localhost:3000/messages",
+                `${API_URL}/messages`,
                 {
                     recipientId: id,
                     content: input,
@@ -128,7 +129,7 @@ export default function Conversation() {
     const deleteMessage = async (msgId) => {
         if (!window.confirm("Delete this message?")) return;
         try {
-            await axios.delete(`http://localhost:3000/messages/${msgId}`, {
+            await axios.delete(`${API_URL}/messages/${msgId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             setMessages((prev) => prev.filter((m) => m.id !== msgId));

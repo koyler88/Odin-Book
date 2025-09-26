@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Messages() {
     const { user } = useAuth();
@@ -16,7 +17,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchConversations = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/messages", {
+                const res = await axios.get(`${API_URL}/messages`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 // Group messages by other user
@@ -47,7 +48,7 @@ export default function Messages() {
         const fetchProfile = async () => {
             if (!user) return;
             try {
-                const res = await axios.get(`http://localhost:3000/users/me`, {
+                const res = await axios.get(`${API_URL}/users/me`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 setProfile(res.data);
@@ -67,7 +68,7 @@ export default function Messages() {
         const fetch = setTimeout(async () => {
             try {
                 const res = await axios.get(
-                    `http://localhost:3000/users/search?username=${search}`,
+                    `${API_URL}/users/search?username=${search}`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

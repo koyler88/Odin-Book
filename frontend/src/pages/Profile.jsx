@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -30,7 +31,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchMyAvatar = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/users/me", {
+  const res = await axios.get(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setMyAvatar(res.data.avatarUrl || null);
@@ -47,7 +48,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const url = isMyProfile ? "/users/me" : `/users/${id}/profile`;
-        const res = await axios.get(`http://localhost:3000${url}`, {
+  const res = await axios.get(`${API_URL}${url}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setProfile(res.data);
@@ -60,7 +61,7 @@ export default function Profile() {
 
         if (!isMyProfile) {
           const followRes = await axios.get(
-            `http://localhost:3000/users/${id}/is-following`,
+            `${API_URL}/users/${id}/is-following`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -82,7 +83,7 @@ export default function Profile() {
     const fetchPosts = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/posts/user/${profile.userId}`,
+          `${API_URL}/posts/user/${profile.userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -102,7 +103,7 @@ export default function Profile() {
     try {
       // Update bio/location
       const res = await axios.put(
-        "http://localhost:3000/users/me",
+        `${API_URL}/users/me`,
         { bio: formData.bio, location: formData.location },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -117,7 +118,7 @@ export default function Profile() {
         uploadData.append("avatar", formData.avatarFile);
 
         const avatarRes = await axios.post(
-          "http://localhost:3000/users/me/avatar",
+          `${API_URL}/users/me/avatar`,
           uploadData,
           {
             headers: {
@@ -154,12 +155,12 @@ export default function Profile() {
   const toggleFollow = async () => {
     try {
       if (isFollowing) {
-        await axios.delete(`http://localhost:3000/users/${id}/follow`, {
+    await axios.delete(`${API_URL}/users/${id}/follow`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
       } else {
         await axios.post(
-          `http://localhost:3000/users/${id}/follow`,
+          `${API_URL}/users/${id}/follow`,
           {},
           {
             headers: {
@@ -173,7 +174,7 @@ export default function Profile() {
 
       // Refetch profile to get updated follower/following counts
       const url = isMyProfile ? "/users/me" : `/users/${id}/profile`;
-      const res = await axios.get(`http://localhost:3000${url}`, {
+  const res = await axios.get(`${API_URL}${url}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setProfile(res.data);
@@ -186,7 +187,7 @@ export default function Profile() {
   const handleDeletePost = async (postId) => {
     if (!confirm("Delete this post?")) return;
     try {
-      await axios.delete(`http://localhost:3000/posts/${postId}`, {
+  await axios.delete(`${API_URL}/posts/${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setPosts(posts.filter((p) => p.id !== postId));
@@ -203,7 +204,7 @@ export default function Profile() {
       formData.append("content", editingPostCaption);
 
       const res = await axios.put(
-        `http://localhost:3000/posts/${editingPost.id}`,
+        `${API_URL}/posts/${editingPost.id}`,
         formData,
         {
           headers: {

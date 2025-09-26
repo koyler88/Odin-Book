@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Feed() {
   const { user } = useAuth();
@@ -20,7 +21,7 @@ export default function Feed() {
     const fetchPosts = async () => {
       try {
         const endpoint = feedType === "all" ? "/posts" : "/posts/following";
-        const res = await axios.get(`http://localhost:3000${endpoint}`, {
+  const res = await axios.get(`${API_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setPosts(res.data);
@@ -36,7 +37,7 @@ export default function Feed() {
     const fetchProfile = async () => {
       if (!user) return;
       try {
-        const res = await axios.get(`http://localhost:3000/users/me`, {
+  const res = await axios.get(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setProfile(res.data);
@@ -56,7 +57,7 @@ export default function Feed() {
       }
       try {
         const res = await axios.get(
-          `http://localhost:3000/users/search?username=${searchQuery}`,
+          `${API_URL}/users/search?username=${searchQuery}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -75,7 +76,7 @@ export default function Feed() {
   const fetchComments = async (postId) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/posts/${postId}/comments`,
+        `${API_URL}/posts/${postId}/comments`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -100,12 +101,12 @@ export default function Feed() {
   const toggleLike = async (postId, liked) => {
     try {
       if (liked) {
-        await axios.delete(`http://localhost:3000/posts/${postId}/like`, {
+  await axios.delete(`${API_URL}/posts/${postId}/like`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
       } else {
         await axios.post(
-          `http://localhost:3000/posts/${postId}/like`,
+          `${API_URL}/posts/${postId}/like`,
           {},
           {
             headers: {
@@ -140,7 +141,7 @@ export default function Feed() {
     if (!content) return;
     try {
       await axios.post(
-        `http://localhost:3000/posts/${postId}/comments`,
+        `${API_URL}/posts/${postId}/comments`,
         { content },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
