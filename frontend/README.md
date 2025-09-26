@@ -1,12 +1,35 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Fauxstagram Frontend
 
-Currently, two official plugins are available:
+## Tech Stack
+- React (Vite)
+- Axios
+- React Router
+- Modern CSS (dark theme)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Environment Variables
+Create a `.env` file in `frontend/`:
+```
+VITE_API_URL=https://your-backend-url.com
+```
 
-## Expanding the ESLint configuration
+## Scripts
+- `npm run dev` — Start local dev server
+- `npm run build` — Build for production
+- `npm run preview` — Preview production build
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Deployment
+- Deploy to Netlify, Vercel, etc.
+- Ensure `VITE_API_URL` points to your backend API
+
+## Features
+- Instagram-style feed, profile, and messaging
+- Responsive UI
+- JWT authentication (token stored in localStorage)
+
+## Customization
+- Update theme in `src/styles/`
+- Add new pages/components in `src/pages/` and `src/components/`
+
+---
+See [main README](../README.md) for full project info.
