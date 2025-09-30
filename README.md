@@ -2,6 +2,12 @@
 
 A full-stack Instagram clone built with React (Vite) frontend and Node.js/Express/Prisma backend.
 
+
+## 🚀 Live Demo
+👉 [Try Fauxstagram Here](https://fauxstagram.netlify.app)  
+
+*(Login or create an account to explore features!)*
+
 ## Features
 - User authentication (JWT)
 - Instagram-style feed, profile, and direct messaging
